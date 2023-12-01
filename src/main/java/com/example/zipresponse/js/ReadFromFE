@@ -1,0 +1,42 @@
+import React, { useState } from 'react';
+import JSZip from 'jszip';
+
+const YourComponent = () => {
+  const [data, setData] = useState([]);
+
+  const fetchDataFromZip = async () => {
+    try {
+      const response = await fetch('api/zipJson');
+      // OR
+      // const response = await fetch('api/download-json-list-zip');
+      const zipData = await response.arrayBuffer();
+
+      const jszip = new JSZip();
+      const zip = await jszip.loadAsync(zipData);
+
+      // Assuming your file is named "data.txt" inside the zip
+      const dataFile = zip.file('data.json');
+
+      if (dataFile) {
+        const content = await dataFile.async('string');
+        // Parse the content as needed (e.g., convert to JSON)
+        const parsedData = JSON.parse(content);
+        setData(parsedData);
+      } else {
+        console.error('Data file not found in the zip');
+      }
+    } catch (error) {
+      console.error('Error fetching or parsing data:', error);
+    }
+  };
+
+  return (
+      <div>
+        <button onClick={fetchDataFromZip}>Fetch Data from Zip</button>
+        {/* Render your data in the component */}
+        <pre>{JSON.stringify(data, null, 2)}</pre>
+      </div>
+  );
+};
+
+export default YourComponent;

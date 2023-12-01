@@ -23,11 +23,9 @@ public class ApiController {
         // Read JSON file from resources
         ClassPathResource jsonResource = new ClassPathResource("large-file.json");
 
-
 //        String zipFilePath = "path/to/your/destination/file.zip";
 //        FileOutputStream fos = new FileOutputStream(zipFilePath);
 //        ZipOutputStream zipOut = new ZipOutputStream(fos);
-
 
         InputStream jsonStream = jsonResource.getInputStream();
         byte[] jsonData = jsonStream.readAllBytes();
@@ -36,7 +34,7 @@ public class ApiController {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (ZipOutputStream zipOut = new ZipOutputStream(baos)) {
             // Add JSON file to the zip
-            ZipEntry entry = new ZipEntry("jsonfile.json");
+            ZipEntry entry = new ZipEntry("data.json");
             zipOut.putNextEntry(entry);
             zipOut.write(jsonData);
             zipOut.closeEntry();
@@ -45,7 +43,7 @@ public class ApiController {
         // Set up response headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", "jsonfile.zip");
+        headers.setContentDispositionFormData("attachment", "data.zip");
 
         // Return the zipped content as a byte array
         return ResponseEntity.ok()
